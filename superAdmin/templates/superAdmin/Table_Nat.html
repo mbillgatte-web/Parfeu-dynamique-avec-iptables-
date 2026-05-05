@@ -1,0 +1,606 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Nat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <link rel="stylesheet" href="{% static 'css/style2_sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style tables_(FMN).css' %}">
+
+  
+
+    <style>
+        
+ 
+
+      
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+
+
+        <!-- Sidebar  information liée à la modification de la sidebar -->
+        <div id="sidebar" class="sidebar bg-gray-800 w-64 h-full shadow-lg flex flex-col">
+            <div class="p-4 flex items-center border-b border-gray-200">
+                <div class="bg-blue-500 p-2 rounded-lg">
+                    <i class="fas fa-shield-alt text-white text-xl"></i>
+                </div>
+                <span class="logo-text ml-3 font-bold text-xl text-white sidebar-hide">NetFirewall</span>
+                <button id="toggle-sidebar" class="ml-auto text-white hover:text-gray-700 sidebar-hide">
+                   <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto py-4">
+                <div class="px-4 mb-6">
+                    <div class="text-xs uppercase font-semibold text-white mb-2 sidebar-hide">Menu Principal</div>
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard' %}#tableau-de-bord" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition" title="Tableau de bord">
+                                <i class="menu-icon fas fa-tachometer-alt text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'table_filter' %}" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition " title="Gestion des règles de pare-feu">
+                                <i class="menu-icon fas fa-filter text-white mr-3"></i>
+                                <!-- modification de la couleur  -->
+                                <span class="menu-text sidebar-hide">Table Filter</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'table_nat' %}" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition active " title="Gestion de la table NAT">
+                                <i class="menu-icon fas fa-network-wired text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Tables NAT</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition" title="Gestion des chaînes IPTables">
+                                <i class="menu-icon fas fa-list-ul text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Tables Mangle</span>
+                            </a>
+                        </li>       
+                    </ul>
+                </div>
+                
+                <div class="px-4 mb-6">
+                    <div class="text-xs uppercase font-semibold text-white mb-2 sidebar-hide">Surveillance</div>
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard' %}#traffic-chart" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition" title="Surveillance du trafic réseau">
+                                <i class="menu-icon fas fa-chart-line text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Statistiques</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'dashboard' %}#alertes-section" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition" title="Alertes et notifications">
+                                <i class="menu-icon fas fa-exclamation-triangle text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Alertes</span>
+                                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a href="#" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition">
+                                <i class="menu-icon fas fa-history text-white mr-3"></i>
+                                <span class="menu-text">Historique</span>
+                            </a>
+                        </li> -->
+                    </ul>
+                </div>
+                
+                <div class="px-4">
+                    <div class="text-xs uppercase font-semibold text-white mb-2 sidebar-hide">Configuration</div>
+                    <ul>
+                        <!-- <li>
+                            <a href="#" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition">
+                                <i class="menu-icon fas fa-cog text-white mr-3"></i>
+                                <span class="menu-text">Paramètres</span>
+                            </a>
+                        </li> -->
+                        <li>
+                            <a href="{% url 'gestion_users' %}" class="menu-item flex items-center px-4 py-3 text-white hover:bg-blue-50 rounded-lg transition " title="Gestion des utilisateurs" >
+                                <i class="menu-icon fas fa-users text-white mr-3"></i>
+                                <span class="menu-text sidebar-hide">Utilisateurs</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center">
+                    <i class="fas fa-user-tie text-white mr-3" title="Super Admin"></i>
+                    <div class="ml-3">
+                        <div class="font-medium text-white sidebar-hide">Super Admin !</div>
+                        <div class="text-xs text-white sidebar-hide">Statut</div>
+                    </div>
+                    <button class="ml-auto text-white hover:text-gray-700" title="Déconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div id="content-area" class="content-area flex-1 overflow-auto">
+            <header class="bg-white shadow-sm">
+                <div class="px-6 py-4 flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-800 " id="tableau-de-bord">Gestion de la table Nat</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <!-- barre de Recherche -->
+                            <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <button class="p-2 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bell"></i>
+                            <!-- cloche -->
+                            <span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500"></span>
+                        </button>
+                        <!-- changement de theme -->
+                        <button id="toggle-theme" class="p-2 text-gray-500 hover:text-yellow-500 transition" title="Changer de thème">
+                            <i id="theme-icon" class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenu principal -->
+            <main class="flex-grow container mx-auto px-4 py-6">
+                <!-- Section de statistiques -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500">Règles totales</p>
+                                <h3 class="text-3xl font-bold" id="total-rules">{{total_rules_nat}}</h3>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-list text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500">Règles SNAT</p>
+                                <h3 class="text-3xl font-bold" id="SNAT-rules">{{snat_rules}}</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-sign-in-alt text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500">Règles DNAT</p>
+                                <h3 class="text-3xl font-bold" id="DNAT-rules">{{dnat_rules}}</h3>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-sign-out-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-500">Règles MASQUERADE</p>
+                                <h3 class="text-3xl font-bold" id="masquerade-rules">{{masquerade_rules}}</h3>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-mask mr-1" title="Masquerade"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section de gestion des règles -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-800">Gestion des règles - Table Nat</h2>
+                        <div class="flex space-x-3">
+                            <button id="refresh-btn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-gray-700 transition-all duration-200 btn-pulse">
+                                <i class="fas fa-sync-alt mr-2"></i> Actualiser
+                            </button>
+                            <button id="add-rule-btn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-all duration-200 btn-pulse">
+                                <i class="fas fa-plus mr-2"></i> Ajouter une règle
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filtres de recherche -->
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Type de NAT</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="nat-type-filter">
+                                    <option value="all">Toutes les NAT(s)</option>
+                                    <option value="SNAT">SNAT</option>
+                                    <option value="DNAT">DNAT</option>
+                                    <option value="MASQUERADE">MASQUERADE</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Interface</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="interface-filter">
+                                    <option value="all">Toutes les interfaces</option>
+                                    <option value="ACCEPT">eth0</option>
+                                    <option value="DROP">wlan0</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Protocole</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="protocol-filter">
+                                    <option value="all">Tous les protocoles</option>
+                                    <option value="tcp">TCP</option>
+                                    <option value="udp">UDP</option>
+                                    <option value="icmp">ICMP</option>
+                                    <option value="all">ALL</option>
+                                </select>
+                            </div>
+                            <!-- <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">IP Source</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="ip-source-filter">
+                                    <option value="all">Toutes les adresses IP</option>
+                                    <option value="192.168.1.1">192.168.1.1</option>
+                                    <option value="10.0.0.1">10.0.0.1</option>
+                                    <option value="172.16.0.1">172.16.0.1</option>
+                                    <option value="all">ALL</option>
+                                </select>
+                            </div> -->
+                            <div class="flex items-end">
+                                <button id="apply-filters" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                                    <i class="fas fa-filter mr-2"></i> Rechercher
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type NAT</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Protocole</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Source</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Destination</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Port Source</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nouvelle Destination</th>
+                                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interface</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse de Translation</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Port de Translation</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commentaire</th> -->
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="rules-table-body">
+                                <!-- Les règles seront ajoutées dynamiquement ici -->
+                                        <!-- Les règles seront affichées dynamiquement ici -->
+                                {% for element in rules_nat_list %}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ forloop.counter }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <span class="px-2 py-1 bg-gray-100 rounded-md">{{element.type}}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 uppercase">{{element.protocol}}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{element.ip_source}} </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{element.ip_destination}} </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{element.port_source}} </td>
+                                        {% comment %} <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{element.port_destination}} </td> {% endcomment %}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${actionColor}">{{element.new_ip_destination}} </td>
+                                    
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button  class="text-blue-600 hover:text-blue-900 mr-4 edit-btn"
+                                                            data-id="{{ element.id }}"
+                                                            data-ipsource="{{ element.ip_source }}"
+                                                            data-ipdestination="{{ element.ip_destination }}"
+                                                            data-portsource="{{ element.port_source }}"
+                                                            data-portdestination="{{ element.port_destination }}"
+                                                            data-protocol="{{ element.protocol }}"
+                                                            data-newSource="{{ element.new_ip_source }}"
+                                                            data-newDestination="{{ element.new_ip_destination }}"
+                                                            data-newPort="{{ element.new_port }}"
+                                                            data-desc="{{ element.description }}"
+                                                            data-type="{{ element.type }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button  data-id="{{ element.id }}" data-url="{% url 'supprimer_nat' element.id %}" class="text-red-600 hover:text-red-900 delete_btn">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+
+                                    </tr>
+                                 {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Affichage de <span id="start-item">1</span> à <span id="end-item">10</span> sur <span id="total-items">0</span> règles
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prev-page" class="px-3 py-1 border border-gray-300  rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                                Précédent
+                            </button>
+                            <button id="next-page" class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                                Suivant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+   
+
+        </div>
+    </div>
+
+
+        <!-- Modale pour ajouter une règle NAT -->
+    <div id="add-nat-rule-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl animate-fadeIn">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-800">Ajouter une nouvelle règle NAT</h3>
+                <button id="close-nat-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="px-6 py-4">
+                <form id="add-na-rule-form" class="space-y-4" method="POST" action="{% url 'ajouter_nat' %}">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Type de NAT</label>
+                            <select name="nat-type" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                <option value="">Sélectionner le type</option>
+                                <option value="SNAT">SNAT</option>
+                                <option value="DNAT">DNAT</option>
+                                <option value="MASQUERADE">MASQUERADE</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Protocole</label>
+                            <select name="protocol" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" >
+                                <option value="">Sélectionner un protocole</option>
+                                <option value="tcp">TCP</option>
+                                <option value="udp">UDP</option>
+                                <option value="icmp">ICMP</option>
+                                <option value="all">ALL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">IP Source</label>
+                            <input type="text" name="ip_source" placeholder="Ex: 192.168.1.10" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">IP Destination</label>
+                            <input type="text" name="ip_destination" placeholder="Ex: 10.0.0.5" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Port Source (optionnel)</label>
+                            <input type="text" name="port_source" placeholder="Ex: 12345" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Port Destination (optionnel)</label>
+                            <input type="text" name="port_destination" placeholder="Ex: 80" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Interface Réseau d'entrée</label>
+                            <!-- <input type="text" name="interface" placeholder="Ex: eth0, wlan0" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required> -->
+                             <select name="interface_dentree" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                <option value="">Sélectionner une Interface</option>
+                                <option value="ens33">LAN</option>
+                                <option value="ens37">WLAN</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Interface Réseau de Destination</label>
+                            <select name="interface_sortie" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                <option value="">Sélectionner une Interface</option>
+                                <option value="ens33">LAN</option>
+                                <option value="ens37">WLAN</option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Adresse de Translation (to-ip)</label>
+                            <input type="text" name="to_ip" placeholder="Ex: 192.168.1.100" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Port de Translation (to-port)</label>
+                            <input type="text" name="to_port" placeholder="Ex: 8080" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Commentaire (optionnel)</label>
+                        <input type="text" name="comment" placeholder="Description de la règle" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex justify-center space-x-3">
+                        <button id="cancel-add-nat-rule" type="button" class="px-4 py-2  bg-gray-500 rounded-lg text-white  transition-all duration-200">
+                            Annuler
+                        </button>
+                        <button id="add-priority-rule" type="button" class="px-4 py-2 bg-red-500 hover:bg-red-700 rounded-lg text-white transition-all duration-200">
+                            <i class="fas fa-arrow-up fa-lg"></i> Ajouter en priorité
+                        </button>
+                        <button id="confirm-add-nat-rule" type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white transition-all duration-200">
+                            <i class="fas fa-arrow-down fa-lg"></i> Ajouter
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    <!-- Modale de confirmation de suppression -->
+    <div id="delete-nat-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fadeIn">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Confirmer la suppression</h3>
+            </div>
+            <div class="px-6 py-4">
+                <p>Êtes-vous sûr de vouloir supprimer cette règle ? Cette action est irréversible.</p>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancel-delete" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                    Annuler
+                </button>
+                <form id="delete-form" method="POST">
+                    {% csrf_token %}
+                    <button id="confirm-delete" type="submit" class=" px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-all duration-200">
+                        <i class="fas fa-trash-alt mr-2"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+        
+    <!-- Formulaire de modification d'une règle NAT -->
+<div id="edit-nat-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl p-8 relative animate-fadeIn">
+        <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <h2 class="text-xl font-bold mb-6 text-center">Modifier la règle NAT</h2>
+
+        <form id="edit-rule-form" class="space-y-6" method="POST" action="{% url 'modifier_nat' %}">
+            {% csrf_token %}
+            <input type="hidden" name="rule_id" id="edit-rule-id">
+
+            <!-- Ligne 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Type de NAT</label>
+                    <select name="nat-type" id="edit-nat-type" class="w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="">Sélectionner le type</option>
+                        <option value="SNAT">SNAT</option>
+                        <option value="DNAT">DNAT</option>
+                        <option value="MASQUERADE">MASQUERADE</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Protocole</label>
+                    <select name="protocol" id="edit-protocol" class="w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="">Sélectionner un protocole</option>
+                        <option value="tcp">TCP</option>
+                        <option value="udp">UDP</option>
+                        <option value="icmp">ICMP</option>
+                        <option value="all">ALL</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ligne 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">IP Source</label>
+                    <input type="text" name="source" id="edit-source" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">IP Destination</label>
+                    <input type="text" name="destination" id="edit-destination" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Ligne 3 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Port Source (optionnel)</label>
+                    <input type="text" name="source-port" id="edit-source-port" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Port Destination (optionnel)</label>
+                    <input type="text" name="destination-port" id="edit-destination-port" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Ligne 4 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Interface Réseau Entrante</label>
+                    <select name="interface_dentree" id="edit-interface-dentree" class="w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="">Sélectionner une Interface</option>
+                        <option value="ens33">LAN</option>
+                        <option value="ens38">WLAN</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Interface Réseau Sortante</label>
+                    <select name="interface_sortie" id="edit-interface-sortie" class="w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="">Sélectionner une Interface</option>
+                        <option value="ens33">LAN</option>
+                        <option value="ens38">WLAN</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ligne 5 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Port de Translation (to-port)</label>
+                    <input type="text" name="to-port" id="edit-to-port" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Adresse de Translation (to-ip)</label>
+                    <input type="text" name="to-ip" id="edit-to-ip" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Commentaire -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Commentaire (optionnel)</label>
+                <textarea name="comment" id="edit-comment" rows="3" class="w-full rounded-lg bg-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+            </div>
+
+            <!-- Boutons -->
+            <div class="flex justify-center space-x-3 pt-4">
+                <button type="button" id="cancel-edit" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Annuler</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Enregistrer</button>
+                <button id="add-priority-rule" class="px-4 py-2 bg-gray-500 rounded-lg text-white transition-all duration-200">
+                    <i class="fas fa-arrow-up fa-lg"></i> Ajouter en priorité
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<!-- code Js pour la sidebar -->
+<script src="{% static "javascript/sidebar_entete.js" %}"></script>
+
+
+
+<!-- Code JS pour la gestion des règles de la table NAT -->
+<script src="{% static "javascript/Table_Nat.js" %}"></script>
+
+    
+</body>
+</html>

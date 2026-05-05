@@ -1,0 +1,104 @@
+
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-open {
+                transform: translateX(0);
+            }
+        }
+
+
+          /* Dégradé animé du background */
+    body {
+      background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #53354a);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Colonnes entrantes */
+    .slide-top { animation: slideTop 1s ease forwards; }
+    .slide-bottom { animation: slideBottom 1s ease forwards; }
+    @keyframes slideTop {
+      from { transform: translateY(-150%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideBottom {
+      from { transform: translateY(150%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Streak diagonal rapide */
+    .glow-streak {
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.5) 100%);
+      transform: rotate(20deg);
+      opacity: 0;
+      animation: streakMove 0.6s ease-out forwards;
+      animation-delay: 1.2s;
+      pointer-events: none;
+      border-radius: 2px;
+      z-index: 20;
+    }
+    @keyframes streakMove {
+      0%   { transform: translateX(-100%) rotate(20deg); opacity: 1; }
+      100% { transform: translateX(50%) rotate(20deg); opacity: 0; }
+    }
+
+    /* Wrapper du formulaire pour le contour lumineux */
+    .form-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Glow contour blanc animé (optionnel si tu veux garder la lueur) */
+    .glow-border {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid white; /* couleur de la lueur */
+      border-radius: 2rem;
+      pointer-events: none;
+      box-shadow: 0 0 15px white;
+      clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+      animation: borderGlow 0.8s linear forwards;
+      animation-delay: 1.8s;
+      z-index: 25;
+    }
+    @keyframes borderGlow {
+      0%   { clip-path: polygon(0 0, 0 0, 0 0, 0 0); opacity:1; }
+      25%  { clip-path: polygon(0 0, 100% 0, 0 0, 0 0); }
+      50%  { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 0); }
+      75%  { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); box-shadow: 0 0 20px white; }
+    }
+
+
+    @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+ #login-error.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+ 

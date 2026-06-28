@@ -1,12 +1,17 @@
+import json
+
 from django import http
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 from .models import *
 from django.utils.timezone import now
 from django.utils.timesince import timesince
 from django.contrib import messages
-from .executer_iptables import * 
+from .executer_iptables import *
+from .chatbot_ia import envoyer_message_claude
 
 
 # Dictionnaire pour changer la couleur de l'icône selon l'action
@@ -448,3 +453,30 @@ def appliquer_suggestion(request, suggestion_id):
         # Redirection vers la page des suggestions
         return redirect("dashboard")
     return redirect(request, 'superAdmin/Dashboard.html')
+
+
+
+@csrf_exempt
+@require_POST
+def chatbot_message(request):
+    """Vue API pour le chatbot IA."""
+    try:
+        data = json.loads(request.body)
+        message = data.get("message", "").strip()
+        historique = data.get("historique", [])
+
+        if not message:
+            return JsonResponse({"error": "Message vide"}, status=400)
+
+        regles_filter = list(Regles_Filter.objects.all())
+        regles_nat = list(Regles_NAT.objects.all())
+        suggestions = list(Suggestions.objects.filter(statut="proposee"))
+
+        reponse = envoyer_message_claude(
+            message, historique, regles_filter, regles_nat, suggestions
+        )
+
+        return JsonResponse({"reponse": reponse})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

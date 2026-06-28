@@ -22,5 +22,6 @@ urlpatterns = [
     path('modifier_suggestion/', views.modifier_suggestion, name="modifier_suggestion"),
     path('supprimer_suggestion/', views.supprimer_suggestion, name="supprimer_suggestion"),
     path("appliquer_suggestion/<int:suggestion_id>/", views.appliquer_suggestion, name="appliquer_suggestion"),
+    path("api/chatbot/", views.chatbot_message, name="chatbot_message"),
 
 ]

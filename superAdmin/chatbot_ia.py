@@ -121,6 +121,7 @@ def tool_scanner_reseau():
 
 
 def tool_autoriser_internet(ip_address):
+    from .models import Regles_NAT
     if not re.match(r'^192\.168\.10\.\d{1,3}$', ip_address):
         return f"Erreur: adresse IP invalide ou hors du réseau local: {ip_address}"
     try:
@@ -128,6 +129,13 @@ def tool_autoriser_internet(ip_address):
                "-o", "ens33", "-s", ip_address, "-j", "MASQUERADE"]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
+            Regles_NAT.objects.create(
+                type="MASQUERADE",
+                protocol="all",
+                ip_source=ip_address,
+                interface_sortie="ens33",
+                description=f"Accès internet pour {ip_address} (via chatbot IA)"
+            )
             return f"Règle MASQUERADE ajoutée avec succès pour {ip_address}. Cette machine a maintenant accès à internet."
         return f"Erreur lors de l'ajout de la règle: {result.stderr}"
     except Exception as e:
@@ -135,6 +143,7 @@ def tool_autoriser_internet(ip_address):
 
 
 def tool_bloquer_internet(ip_address):
+    from .models import Regles_NAT
     if not re.match(r'^192\.168\.10\.\d{1,3}$', ip_address):
         return f"Erreur: adresse IP invalide ou hors du réseau local: {ip_address}"
     try:
@@ -142,6 +151,11 @@ def tool_bloquer_internet(ip_address):
                "-o", "ens33", "-s", ip_address, "-j", "MASQUERADE"]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
+            Regles_NAT.objects.filter(
+                type="MASQUERADE",
+                ip_source=ip_address,
+                interface_sortie="ens33"
+            ).delete()
             return f"Règle MASQUERADE supprimée pour {ip_address}. Cette machine n'a plus accès à internet."
         return f"Erreur lors de la suppression: {result.stderr}"
     except Exception as e:

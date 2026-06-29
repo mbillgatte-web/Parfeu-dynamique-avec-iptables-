@@ -35,15 +35,14 @@ def connexion(request):
         except Utilisateur.DoesNotExist:
             return render(request, "superAdmin/connexion.html", {"error": "Email introuvable"})
 
-        # Vérification du mot de passe
-        if user.password != password:
+        if not user.verify_password(password):
             return render(request, "superAdmin/connexion.html", {"error": "Mot de passe incorrect"})
 
-        # Vérification du statut
-        if user.statut == "superadmin":
-            return redirect("dashboard")
-        else:
-            return redirect("dashboard")
+        request.session['user_id'] = user.id
+        request.session['user_email'] = user.email
+        request.session['user_statut'] = user.statut
+
+        return redirect("dashboard")
 
     return render(request, "superAdmin/connexion.html")
 

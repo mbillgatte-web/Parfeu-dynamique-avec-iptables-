@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your models here.
 
@@ -9,10 +10,16 @@ class Utilisateur(models.Model):
     )
 
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)  
+    password = models.CharField(max_length=128)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default="admin")
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def verify_password(self, raw_password):
+        return check_password(raw_password, self.password)
 
     def __str__(self):
         return f"{self.prenom} {self.nom} ({self.email}) - {self.statut}"

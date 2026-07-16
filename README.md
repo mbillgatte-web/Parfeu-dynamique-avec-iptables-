@@ -40,14 +40,10 @@ python -m venv venv
 *(Une fois activé, vous devriez voir `(venv)` apparaître au début de la ligne de votre terminal.)*
 
 ### 3. Installer les dépendances
-Installez toutes les bibliothèques nécessaires au bon fonctionnement de l'application via le fichier `Requirement.txt` (qui se trouve actuellement dans le dossier parent de ce répertoire).
+Installez toutes les bibliothèques nécessaires au bon fonctionnement de l'application via le fichier `requirements.txt` à la racine du projet :
 
 ```bash
-# Si le fichier est dans le dossier parent :
-pip install -r ../Requirement.txt
-
-# Si vous déplacez Requirement.txt à la racine de ce dossier :
-# pip install -r Requirement.txt
+pip install -r requirements.txt
 ```
 
 ### 4. Appliquer les migrations de base de données
@@ -75,6 +71,40 @@ python manage.py runserver
 
 L'application est maintenant en cours d'exécution. Vous pouvez y accéder depuis votre navigateur à l'adresse :
 👉 **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**
+
+---
+
+## 🚂 Déploiement sur Railway
+
+⚠️ Cette application pilote `iptables` via `sudo` sur la machine qui l'héberge (voir `superAdmin/executer_iptables.py`). Sur Railway (conteneurs sans accès root ni `CAP_NET_ADMIN`), le **backend Django tourne normalement** (dashboard, authentification, base de données, chatbot IA), mais les actions qui exécutent réellement `iptables` échoueront puisque le conteneur n'a pas les privilèges nécessaires ni d'accès au vrai pare-feu de l'hôte à protéger.
+
+### 1. Créer le projet sur Railway
+- Connecte ton repo GitHub sur [railway.app](https://railway.app)
+- Railway détecte automatiquement le projet Python via `requirements.txt` (build via Nixpacks) et lit `railway.json` pour les commandes de build/démarrage
+
+### 2. Ajouter une base PostgreSQL
+- Dans le projet Railway : **New → Database → PostgreSQL**
+- Dans le service web, ajoute la variable `DATABASE_URL` avec la valeur de référence `${{Postgres.DATABASE_URL}}`
+
+### 3. Configurer les variables d'environnement du service web
+Voir `.env.example` pour la liste complète. Au minimum :
+```
+SECRET_KEY=<une clé secrète générée pour la prod>
+DEBUG=False
+ALLOWED_HOSTS=<ton-domaine>.up.railway.app
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+ANTHROPIC_API_KEY=<optionnel, pour le chatbot IA>
+```
+
+### 4. Déployer
+Railway build puis démarre l'appli avec :
+```
+python manage.py migrate --noinput   # au démarrage
+gunicorn Projet_Parfeu.wsgi --bind 0.0.0.0:$PORT
+```
+(voir `railway.json` / `Procfile`). Les fichiers statiques sont servis directement par [Whitenoise](https://whitenoise.readthedocs.io/), pas besoin de service séparé.
+
+Crée ensuite un super-utilisateur en une fois via le shell Railway (`railway run python manage.py createsuperuser`) ou l'onglet "Shell" du service.
 
 ---
 

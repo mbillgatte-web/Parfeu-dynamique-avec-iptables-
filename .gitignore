@@ -15,10 +15,14 @@ venv.bak/
 # Environment Variables
 .env
 .env.*
+!.env.example
 
 # Database
 db.sqlite3
 db.sqlite3-journal
+
+# Static files collected for deployment
+staticfiles/
 
 # Django stuff
 *.log

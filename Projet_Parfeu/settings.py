@@ -40,6 +40,10 @@ _railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
 if _railway_domain:
     ALLOWED_HOSTS.append(_railway_domain)
 
+_render_domain = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if _render_domain:
+    ALLOWED_HOSTS.append(_render_domain)
+
 if DEBUG and not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 

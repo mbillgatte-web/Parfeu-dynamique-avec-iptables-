@@ -108,6 +108,31 @@ Crée ensuite un super-utilisateur en une fois via le shell Railway (`railway ru
 
 ---
 
+## 🎨 Déploiement sur Render
+
+⚠️ Même remarque que pour Railway : le backend Django tourne normalement, mais les actions `iptables` échoueront (conteneur sans root).
+
+### 1. Créer le Blueprint
+- Sur [render.com](https://render.com) : **New → Blueprint**
+- Connecte le repo GitHub `Parfeu-dynamique-avec-iptables-`, branche `main`
+- Render lit automatiquement `render.yaml` à la racine et propose de créer :
+  - un **Web Service** (Python, build via `pip install -r requirements.txt`)
+  - une **base PostgreSQL** gratuite, déjà reliée via `DATABASE_URL`
+  - `SECRET_KEY` généré automatiquement, `DEBUG=False`
+- Clique **"Apply"** pour tout créer d'un coup
+
+### 2. Compléter les variables
+Render te demandera juste `ANTHROPIC_API_KEY` (marquée `sync: false` dans le blueprint, donc à saisir manuellement) — optionnelle, pour le chatbot IA. Rien d'autre à faire : `ALLOWED_HOSTS` n'a pas besoin d'être renseigné, le domaine `*.onrender.com` est détecté automatiquement (variable `RENDER_EXTERNAL_HOSTNAME` fournie par Render).
+
+### 3. Déployer
+Render build et démarre automatiquement avec la commande définie dans `render.yaml` (collectstatic + migrate + gunicorn). Une fois "Live", ouvre l'URL `https://<nom-du-service>.onrender.com`.
+
+Crée le super-utilisateur via l'onglet **"Shell"** du service Render : `python manage.py createsuperuser`.
+
+⚠️ Sur le plan gratuit Render, le service s'endort après 15 min d'inactivité (le premier chargement après une pause peut prendre ~30s).
+
+---
+
 ## 🔒 Versioning et GitHub
 
 Ce projet est configuré avec un fichier `.gitignore` strict. 
